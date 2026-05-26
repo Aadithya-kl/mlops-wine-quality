@@ -1,0 +1,53 @@
+# =============================================================================
+# k8s/k8s-config.yaml
+# Kubernetes Deployment + Service for the Wine Quality Prediction Streamlit app.
+#
+# Apply with:
+#   kubectl apply -f k8s/k8s-config.yaml
+# =============================================================================
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wine-quality-deployment
+  labels:
+    app: wine-quality
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: wine-quality
+  template:
+    metadata:
+      labels:
+        app: wine-quality
+    spec:
+      containers:
+        - name: wine-quality-app
+          # ── Replace with your actual DockerHub username ──────────────────
+          image: replace-this-with-your-dockerhub-username/wine-quality-app:latest
+          ports:
+            - containerPort: 8501
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu:    "250m"
+            limits:
+              memory: "512Mi"
+              cpu:    "500m"
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: wine-quality-service
+spec:
+  type: NodePort
+  selector:
+    app: wine-quality
+  ports:
+    - protocol:   TCP
+      port:       8501
+      targetPort: 8501
+      nodePort:   30085

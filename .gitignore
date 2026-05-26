@@ -1,0 +1,41 @@
+# ── Python ────────────────────────────────────────────────
+venv/
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+build/
+
+# ── Environment / secrets ────────────────────────────────
+.env
+.env.*
+*.secret
+
+# ── MLflow tracking (large, local) ───────────────────────
+mlruns/
+mlflow.db
+
+# ── DVC cache (data is stored in S3 remote) ──────────────
+.dvc/cache/
+.dvc/tmp/
+
+# NOTE: Do NOT ignore .dvc files or dvc.yaml — they must be committed.
+
+# ── Generated model and report artifacts ─────────────────
+# (These are reproduced by 'dvc repro' in CI)
+models/*.pkl
+reports/*.png
+reports/*.json
+
+# ── IDE / editor files ───────────────────────────────────
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# ── OS junk ──────────────────────────────────────────────
+.DS_Store
+Thumbs.db

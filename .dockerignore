@@ -1,0 +1,23 @@
+# Ignore virtual environment directories
+venv/
+.venv/
+env/
+
+# Git metadata (not needed in image)
+.git/
+.github/
+
+# Python bytecode cache
+__pycache__/
+*.pyc
+*.pyo
+
+# MLflow tracking runs (large, local only)
+mlruns/
+
+# DVC cache (local only — data is pulled from remote)
+.dvc/cache/
+
+# OS-level junk
+.DS_Store
+Thumbs.db
