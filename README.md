@@ -346,3 +346,4 @@ End-to-End MLOps Pipeline · Wine Quality Prediction
 ---
 
 *Built with ❤️ using scikit-learn, MLflow, DVC, Streamlit, Docker, and Kubernetes.*
+Workflow trigger update 
