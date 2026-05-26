@@ -1,65 +1,46 @@
 name: MLSD MLOps Pipeline
 
-# ── Trigger: run on every push to main ──────────────────────────────────────
 on:
   push:
     branches:
       - main
 
 jobs:
-  mlops-pipeline:
-    name: Train · Evaluate · Build · Push
+  build-train-and-push:
     runs-on: ubuntu-latest
 
     steps:
-      # ── 1. Checkout the repository ──────────────────────────────────────
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # ── 2. Set up Python 3.10 ───────────────────────────────────────────
-      - name: Set up Python 3.10
+      - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.10"
-          cache: "pip"
 
-      # ── 3. Install Python dependencies ──────────────────────────────────
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
 
-      # ── 4. Configure AWS credentials (stored as GitHub Secrets) ─────────
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id:     ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region:            ${{ secrets.AWS_DEFAULT_REGION }}
+      - name: Run training pipeline
+        run: |
+          python src/train.py
 
-      # ── 5. Pull DVC-tracked data from S3 ────────────────────────────────
-      - name: DVC pull (fetch data from S3)
-        run: dvc pull
+      - name: Display generated metrics
+        run: |
+          cat reports/metrics.json
 
-      # ── 6. Reproduce the DVC pipeline (trains model, saves artifacts) ────
-      - name: DVC reproduce (train pipeline)
-        run: dvc repro
-
-      # ── 7. Print metrics for a quick CI log ─────────────────────────────
-      - name: Print metrics
-        run: cat reports/metrics.json
-
-      # ── 8. Log in to DockerHub ───────────────────────────────────────────
-      - name: Log in to DockerHub
+      - name: Login to DockerHub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      # ── 9. Build Docker image ────────────────────────────────────────────
       - name: Build Docker image
         run: |
           docker build -t ${{ secrets.DOCKER_USERNAME }}/wine-quality-app:latest .
 
-      # ── 10. Push Docker image to DockerHub ──────────────────────────────
       - name: Push Docker image to DockerHub
         run: |
           docker push ${{ secrets.DOCKER_USERNAME }}/wine-quality-app:latest
