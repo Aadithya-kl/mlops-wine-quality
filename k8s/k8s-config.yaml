@@ -24,8 +24,7 @@ spec:
     spec:
       containers:
         - name: wine-quality-app
-          # ── Replace with your actual DockerHub username ──────────────────
-          image: replace-this-with-your-dockerhub-username/wine-quality-app:latest
+          image: klaadithya/wine-quality-app:latest
           ports:
             - containerPort: 8501
           resources:
